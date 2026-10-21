@@ -242,6 +242,11 @@ info "Final PATH:"
 grep "^export PATH" "$ZSHRC" | sed 's/^/    /'
 
 echo ""
+warn "PER-USER install: update-all is wired into ~/.zshrc, config in ~/.config/kali-setup,"
+warn "and /opt/pentest-tools is owned by $USER. It is tied to THIS user account."
+warn "Recreate/switch the user and you lose it → back up ~/.config/kali-setup/ if it matters."
+
+echo ""
 info "Setup complete. Reload your shell:"
 echo "    source ~/.zshrc"
 echo "    update-all --help"

@@ -124,6 +124,8 @@ Edit config/manifests on one box → push → every other Kali receives them on 
 - **Shell: `zsh` only** (Kali default). `setup.sh` writes only to `~/.zshrc`; `update-all.zsh` uses zsh/bash syntax, not POSIX `sh`.
 - Also needed: `git`, `curl`, `python3` (always on Kali); optional `gh` (higher GitHub rate-limit / private repos).
 
+> ⚠️ **Per-user install.** This sets up *your* user, not the system. `update-all` is wired into **your** `~/.zshrc`, the local manifests + `npm.list`/`pip.list` live in `~/.config/kali-setup/`, and `/opt/pentest-tools` is owned by the user that runs `setup.sh`. All of this is tied to your account — **recreate or switch the user and you lose it**. If the box matters, back up `~/.config/kali-setup/` (and your repo clone). For a true system-wide install (shared by all users) the wiring would move to `/etc/zsh/zshrc` with group-owned `/opt` — not supported out of the box.
+
 ---
 
 ## `> TREE`

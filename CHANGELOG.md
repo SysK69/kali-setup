@@ -7,6 +7,7 @@ versioning follows [SemVer](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- Docs + `setup.sh` output: clarified this is a **per-user** install (wiring in `~/.zshrc`, config in `~/.config/kali-setup`, `/opt/pentest-tools` user-owned) - tied to the account; back up `~/.config/kali-setup/`.
 - `update-all --dry-run`: preview the apt full-upgrade (`apt -s full-upgrade`) and the Kali release check without changing anything.
 - `update-all` apt step: Kali release notice - flags when a newer `base-files` (release) is available and hints the `kali-linux-*` metapackage for new default tools.
 - `update-all`: `--only <steps>` to run a subset (e.g. `apt,npm`), and a per-step **summary** (ok/warn/skip) at the end.
