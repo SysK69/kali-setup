@@ -1,0 +1,13 @@
+# git.list — SHARED tools installed via `git clone` into /opt/pentest-tools/
+# Format:  name | git_url
+# - name : folder under /opt/pentest-tools/
+# - url  : repo to clone; update-all runs `git pull` on every run
+# Empty lines and lines starting with # are ignored.
+
+gmsadumper     | https://github.com/micahvandeusen/gMSADumper.git
+badsuccessor   | https://github.com/akamai/BadSuccessor.git
+pkinittools    | https://github.com/dirkjanm/PKINITtools.git
+
+# Others (uncomment / add your own):
+# PrivescCheck   | https://github.com/itm4n/PrivescCheck.git
+# kerbrute-src   | https://github.com/ropnop/kerbrute.git

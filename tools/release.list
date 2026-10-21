@@ -1,0 +1,17 @@
+# release.list — SHARED binaries from GitHub Releases (latest release)
+# Format:  name | owner/repo | glob_asset
+# - name       : folder under /opt/pentest-tools/
+# - owner/repo : GitHub repo
+# - glob_asset : pattern (glob, not regex) of the asset to download from the release
+# tools-sync downloads only if the release tag changed (tracked in .version).
+# .gz files are decompressed, binaries made executable (chmod +x).
+# Empty lines and lines starting with # are ignored.
+
+chisel    | jpillora/chisel   | chisel_*_linux_amd64.gz
+linpeas   | peass-ng/PEASS-ng | linpeas.sh
+winpeas   | peass-ng/PEASS-ng | winPEASx64.exe
+
+# ─── SOURCE-ONLY: no binary in GitHub Releases → MANUAL update ───
+# rubeus             : GhostPack/Rubeus      → release without assets (compile with VS,
+#                      or grab a binary from r3motecontrol/Ghostpack-CompiledBinaries)
+# gmsapasswordreader : rvazarkar/GMSAPasswordReader → no release (C# source only)

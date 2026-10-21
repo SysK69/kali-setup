@@ -1,0 +1,11 @@
+# OS / editor
+.DS_Store
+*.swp
+*~
+.vscode/
+
+# log output
+*.log
+
+# internal dev log (local only)
+handoff.md

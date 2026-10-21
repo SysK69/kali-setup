@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="820" height="230" viewBox="0 0 820 230" role="img" aria-label="KALI SETUP">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0b0f0b"/>
+      <stop offset="1" stop-color="#060806"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3.2" result="b"/>
+      <feMerge>
+        <feMergeNode in="b"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <pattern id="scan" width="4" height="4" patternUnits="userSpaceOnUse">
+      <rect width="4" height="1" fill="#00ff41" opacity="0.04"/>
+    </pattern>
+  </defs>
+
+  <rect x="1" y="1" width="818" height="228" rx="14" fill="url(#bg)" stroke="#00ff41" stroke-opacity="0.45" stroke-width="2"/>
+  <rect x="1" y="1" width="818" height="228" rx="14" fill="url(#scan)"/>
+
+  <!-- window dots -->
+  <circle cx="28" cy="26" r="5" fill="#ff5f56"/>
+  <circle cx="46" cy="26" r="5" fill="#ffbd2e"/>
+  <circle cx="64" cy="26" r="5" fill="#27c93f"/>
+  <text x="90" y="30" font-family="'Fira Code',monospace" font-size="12" fill="#3a5a3a">root@kali: ~/kali-setup</text>
+
+  <!-- title -->
+  <text x="410" y="120" text-anchor="middle" font-family="'Fira Code','Courier New',monospace" font-weight="700" font-size="72" letter-spacing="6" fill="#00ff41" filter="url(#glow)">KALI SETUP</text>
+
+  <!-- prompt line -->
+  <text x="410" y="165" text-anchor="middle" font-family="'Fira Code',monospace" font-size="17" fill="#8bffb0">
+    <tspan fill="#00ff41">root@kali</tspan><tspan fill="#3a5a3a">:~#</tspan> weaponize a clean Kali · keep every box in sync<tspan fill="#00ff41" font-weight="700"> █</tspan>
+  </text>
+
+  <!-- tags -->
+  <text x="410" y="200" text-anchor="middle" font-family="'Fira Code',monospace" font-size="13" fill="#3a7a4a" letter-spacing="2">[ bash · zsh · pipx · impacket · netexec · evil-winrm · auto-sync ]</text>
+</svg>
