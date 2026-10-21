@@ -23,7 +23,7 @@ You declare *what* you want once (scripts + manifests); any Kali becomes identic
 
 ```console
 root@kali:~# git clone https://github.com/SysK69/kali-setup
-root@kali:~# cd kali-setup && bash setup.sh
+root@kali:~# cd kali-setup && ./setup.sh
 root@kali:~# source ~/.zshrc
 root@kali:~# update-all        # keep it fresh, forever
 ```
@@ -75,7 +75,7 @@ One command, updates everything - and updates itself (step 1 is `git pull` of th
 
 > Single source: [`shell/update-all.zsh`](shell/update-all.zsh), sourced from `.zshrc`. Changes take effect from the **next shell** (or `source ~/.zshrc`). Prints a per-step **summary** at the end; run a subset with `update-all --only apt,npm`, or preview the system upgrade touching nothing with `update-all --dry-run`. The apt step also flags a newer Kali release when one is available. See `update-all --help`.
 >
-> To back out: **`bash uninstall.sh`** unwires `update-all` from `~/.zshrc` and removes the symlinks (`--purge` also removes `/opt/pentest-tools` and the local config). It does not undo one-off system changes (apt purges, impacket); `~/.zshrc` is backed up first.
+> To back out: **`./uninstall.sh`** unwires `update-all` from `~/.zshrc` and removes the symlinks (`--purge` also removes `/opt/pentest-tools` and the local config). It does not undo one-off system changes (apt purges, impacket); `~/.zshrc` is backed up first.
 
 ---
 

@@ -23,7 +23,7 @@ Dichiari *cosa* vuoi una volta (script + manifesti); qualsiasi Kali diventa iden
 
 ```console
 root@kali:~# git clone https://github.com/SysK69/kali-setup
-root@kali:~# cd kali-setup && bash setup.sh
+root@kali:~# cd kali-setup && ./setup.sh
 root@kali:~# source ~/.zshrc
 root@kali:~# update-all        # keep it fresh, forever
 ```
@@ -75,7 +75,7 @@ Un comando, aggiorna tutto - e aggiorna sé stesso (step 1 = `git pull` di quest
 
 > Fonte unica: [`shell/update-all.zsh`](shell/update-all.zsh), sorgiato da `.zshrc`. Le modifiche sono attive dalla **shell successiva** (o `source ~/.zshrc`). Stampa un **summary** per-step alla fine; esegui un sottoinsieme con `update-all --only apt,npm`, o fai l'anteprima dell'upgrade senza toccare nulla con `update-all --dry-run`. Lo step apt segnala anche una nuova release Kali quando disponibile. Vedi `update-all --help`.
 >
-> Per rimuovere: **`bash uninstall.sh`** scollega `update-all` da `~/.zshrc` e rimuove i symlink (`--purge` rimuove anche `/opt/pentest-tools` e la config locale). Non annulla le modifiche one-off di sistema (purge apt, impacket); `~/.zshrc` viene backuppato prima.
+> Per rimuovere: **`./uninstall.sh`** scollega `update-all` da `~/.zshrc` e rimuove i symlink (`--purge` rimuove anche `/opt/pentest-tools` e la config locale). Non annulla le modifiche one-off di sistema (purge apt, impacket); `~/.zshrc` viene backuppato prima.
 
 ---
 
