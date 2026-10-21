@@ -327,13 +327,13 @@ do_dedup(){
   if [[ -z "$found" ]]; then info "No scattered copies found. Clean."; return 0; fi
 
   echo ""
-  warn "Scattered copies found. For each: keep / trash / backup."
-  echo "  Note: you don't need to keep these old copies, but instead of trashing them"
-  echo "  you can move them to the backup folder - at the cost of disk space."
+  warn "Scattered copies found. Pick what to do with each old copy."
+  echo "  You don't need to keep them. backup = keep a copy (uses disk space),"
+  echo "  trash = recoverable from the trash, delete = gone for good."
   echo "  Backup folder: $BACKUP_DIR"
   echo ""
 
-  local name path canon canon_ver found_ver ans="" ts=""
+  local name path canon canon_ver found_ver ans="" ts="" confirm=""
   while IFS=$'\t' read -r name path; do
     [[ -z "$name" || -z "$path" || ! -d "$path" ]] && continue
     canon="$TOOLS_DIR/$name"
@@ -342,21 +342,30 @@ do_dedup(){
     echo "▸ $name"
     printf '    found:     %-44s @ %s\n' "$path" "$found_ver"
     printf '    canonical: %-44s @ %s\n' "$canon" "$canon_ver"
+    echo "      1) keep      2) backup      3) trash      4) delete (permanent)"
     # read from the terminal (not the here-string on stdin); no tty → default to keep
     ans=""
-    read -r -p "    keep / trash / backup ? [K/t/b] " ans </dev/tty 2>/dev/null || ans=""
+    read -r -p "    choice [1]: " ans </dev/tty 2>/dev/null || ans=""
     ts="$(date +%Y%m%d%H%M%S)"
     case "$ans" in
-      t|T)
+      2|b|B)
+        mkdir -p "$BACKUP_DIR" && mv "$path" "$BACKUP_DIR/${name}-${ts}" \
+          && info "    moved to $BACKUP_DIR/${name}-${ts}" || err "    move failed" ;;
+      3|t|T)
         if command -v gio >/dev/null 2>&1; then
           gio trash "$path" && info "    trashed $path" || err "    trash failed"
         else
           warn "    gio not available → moving to backup instead"
           mkdir -p "$BACKUP_DIR" && mv "$path" "$BACKUP_DIR/${name}-${ts}" && info "    backed up to $BACKUP_DIR/${name}-${ts}"
         fi ;;
-      b|B)
-        mkdir -p "$BACKUP_DIR" && mv "$path" "$BACKUP_DIR/${name}-${ts}" \
-          && info "    moved to $BACKUP_DIR/${name}-${ts}" || err "    move failed" ;;
+      4|d|D)
+        confirm=""
+        read -r -p "    permanently delete $path ? type 'yes': " confirm </dev/tty 2>/dev/null || confirm=""
+        if [[ "$confirm" == "yes" ]]; then
+          rm -rf "$path" && info "    deleted $path" || err "    delete failed"
+        else
+          info "    kept $path (delete not confirmed)"
+        fi ;;
       *) info "    kept $path" ;;
     esac
   done <<< "$found"

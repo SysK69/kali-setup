@@ -88,7 +88,7 @@ bin/tools-sync.sh                 # full sync (git + release · shared + local)
 bin/tools-sync.sh --git-only      # git repos only
 bin/tools-sync.sh --release-only  # GitHub Releases binaries only
 bin/tools-sync.sh --import        # suggests found tools (moves nothing)
-bin/tools-sync.sh --dedup         # scattered copies → keep/trash/backup (asks)
+bin/tools-sync.sh --dedup         # scattered copies → keep/backup/trash/delete (asks)
 bin/tools-sync.sh --prune         # removes undeclared tools (opt-in, asks)
 ```
 
@@ -100,7 +100,7 @@ bin/tools-sync.sh --prune         # removes undeclared tools (opt-in, asks)
 - **Shared** tools go in `tools/*.list` (committed) → propagate to all boxes on `update-all`.
 - **Local / per-machine** entries go in `~/.config/kali-setup/local.*.list` → stay off git.
 - Linux release binaries get a stable symlink `~/.local/bin/<name>` → run `chisel`, not `chisel_1.12.0_linux_amd64`.
-- `--dedup` finds old scattered copies of a tool (by git remote or name), shows each version vs the canonical one, and asks to **keep / trash / backup** - never touching `/opt/pentest-tools` itself.
+- `--dedup` finds old scattered copies of a tool (by git remote or name), shows each version vs the canonical one, and asks (numbered menu) to **keep / backup / trash / delete** - never touching `/opt/pentest-tools` itself.
 
 ---
 
