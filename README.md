@@ -17,9 +17,11 @@
 
 ## `> WHAT IT IS`
 
-**kali-setup** is your pentest environment as **code**. It takes any Kali - fresh or already messy - brings it to a clean, reproducible state, and keeps it updated and **in sync** across all your machines.
+**kali-setup** automates the setup and upkeep of a Kali pentest box. Instead of configuring every machine by hand - and remembering what you installed, where, and with which package manager - **you declare it once** in this repo (tool lists + scripts).
 
-You declare *what* you want once (scripts + manifests); any Kali becomes identical with one command, and stays that way. No more polluted PATH, impacket installed three ways, or `/opt` binaries you downloaded months ago and never updated.
+Then on any Kali: clone, run one command, and get the **exact same environment** - clean, with every tool up to date. Add or change something and a single `git pull` brings **all your boxes** in line.
+
+No more venv-polluted PATH, impacket installed three different ways, or `/opt` binaries you downloaded months ago and never updated.
 
 ```console
 root@kali:~# git clone https://github.com/SysK69/kali-setup
