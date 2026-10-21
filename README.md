@@ -74,6 +74,8 @@ One command, updates everything — and updates itself (step 1 is `git pull` of 
 | `8` | **/opt** | manual git clones in `/opt/pentest-tools/` |
 
 > Single source: [`shell/update-all.zsh`](shell/update-all.zsh), sourced from `.zshrc`. Changes take effect from the **next shell** (or `source ~/.zshrc`). Run `update-all --help` for details.
+>
+> To back out: **`bash uninstall.sh`** unwires `update-all` from `~/.zshrc` and removes the symlinks (`--purge` also removes `/opt/pentest-tools` and the local config). It does not undo one-off system changes (apt purges, impacket); `~/.zshrc` is backed up first.
 
 ---
 
@@ -129,6 +131,7 @@ Edit config/manifests on one box → push → every other Kali receives them on 
 ```
 kali-setup/
 ├── setup.sh              # orchestrator: audit → fix → tools → arm
+├── uninstall.sh          # unwire update-all + remove symlinks (--purge to remove tools too)
 ├── bin/tools-sync.sh     # /opt/pentest-tools manager (git + release, dedup, prune, import)
 ├── tools/{git,release}.list   # SHARED manifests
 ├── shell/update-all.zsh  # update-all() · single source of truth
