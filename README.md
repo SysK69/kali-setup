@@ -42,11 +42,11 @@ root@kali:~# update-all        # keep it fresh, forever
 
 **Principles**
 
-- **Declarative** — you describe *what* you want (lists), not the steps to install it
-- **Idempotent** — safe to re-run; each step only does what's missing
-- **Single source of truth** — one place per thing, no copies that drift apart
-- **Multi-host** — the repo is the shared truth; every box aligns via `git pull`
-- **Non-destructive** — nothing is removed without an explicit confirmation
+- **Declarative** - you describe *what* you want (lists), not the steps to install it
+- **Idempotent** - safe to re-run; each step only does what's missing
+- **Single source of truth** - one place per thing, no copies that drift apart
+- **Multi-host** - the repo is the shared truth; every box aligns via `git pull`
+- **Non-destructive** - nothing is removed without an explicit confirmation
 
 <details>
 <summary><code>setup.sh</code> steps</summary>
@@ -90,13 +90,13 @@ One command, updates everything - and updates itself (step 1 is `git pull` of th
 - **Release check:** the apt step flags a newer Kali release when one is out.
 - Full help: `update-all --help`.
 
-**Uninstall** — `./uninstall.sh` unwires `update-all` from `~/.zshrc` and removes the tool symlinks (add `--purge` to also delete `/opt/pentest-tools` and the local config). Your `~/.zshrc` is backed up first. It does **not** undo one-off system changes (apt purges, impacket).
+**Uninstall** - `./uninstall.sh` unwires `update-all` from `~/.zshrc` and removes the tool symlinks (add `--purge` to also delete `/opt/pentest-tools` and the local config). Your `~/.zshrc` is backed up first. It does **not** undo one-off system changes (apt purges, impacket).
 
 ---
 
 ## `> TOOL MANAGER` - `/opt/pentest-tools/`
 
-External tools (not in apt) live in `/opt/pentest-tools/`. You list them in a **manifest** — a plain text file, one tool per line — and `tools-sync.sh` installs and updates them, identically on every Kali.
+External tools (not in apt) live in `/opt/pentest-tools/`. You list them in a **manifest** - a plain text file, one tool per line - and `tools-sync.sh` installs and updates them, identically on every Kali.
 
 ```bash
 bin/tools-sync.sh                 # full sync (git + release · shared + local)
@@ -139,12 +139,12 @@ Edit config/manifests on one box → push → every other Kali receives them on 
 - **Shell: `zsh` only** (Kali default). `setup.sh` writes only to `~/.zshrc`; `update-all.zsh` uses zsh/bash syntax, not POSIX `sh`.
 - Also needed: `git`, `curl`, `python3` (always on Kali); optional `gh` (higher GitHub rate-limit / private repos).
 
-> ⚠️ **Per-user install** — this configures *your* user, not the whole system:
+> ⚠️ **Per-user install** - this configures *your* user, not the whole system:
 > - `update-all` is wired into **your** `~/.zshrc`
 > - local manifests + `npm.list` / `pip.list` live in `~/.config/kali-setup/`
 > - `/opt/pentest-tools` is owned by the user that ran `setup.sh`
 >
-> It's tied to your account: **recreate or switch the user and you lose it** — so back up `~/.config/kali-setup/` if the box matters. A shared, system-wide install isn't supported out of the box (it would wire into `/etc/zsh/zshrc` with a group-owned `/opt`).
+> It's tied to your account: **recreate or switch the user and you lose it** - so back up `~/.config/kali-setup/` if the box matters. A shared, system-wide install isn't supported out of the box (it would wire into `/etc/zsh/zshrc` with a group-owned `/opt`).
 
 ---
 
