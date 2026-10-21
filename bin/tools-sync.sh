@@ -333,6 +333,10 @@ do_dedup(){
   echo "  Backup folder: $BACKUP_DIR"
   echo ""
 
+  # the loop's stdin is the here-string, so prompt/read go through the terminal.
+  # probe that /dev/tty actually OPENS (the node can exist yet fail with ENXIO when
+  # there's no controlling terminal); no terminal → /dev/null (EOF → default keep).
+  local tty="/dev/null"; { : >/dev/tty; } 2>/dev/null && tty="/dev/tty"
   local name path canon canon_ver found_ver ans="" ts="" confirm=""
   while IFS=$'\t' read -r name path; do
     [[ -z "$name" || -z "$path" || ! -d "$path" ]] && continue
@@ -343,9 +347,12 @@ do_dedup(){
     printf '    found:     %-44s @ %s\n' "$path" "$found_ver"
     printf '    canonical: %-44s @ %s\n' "$canon" "$canon_ver"
     echo "      1) keep      2) backup      3) trash      4) delete (permanent)"
-    # read from the terminal (not the here-string on stdin); no tty → default to keep
+    # prompt+read via the terminal directly (the loop's stdin is the here-string).
+    # NB: don't use `read -p` here — its prompt goes to stderr, which we must keep
+    # visible; writing the prompt to /dev/tty avoids hiding it. No tty → default keep.
     ans=""
-    read -r -p "    choice [1]: " ans </dev/tty 2>/dev/null || ans=""
+    printf '    choice [1]: ' >"$tty"
+    read -r ans <"$tty" || ans=""
     ts="$(date +%Y%m%d%H%M%S)"
     case "$ans" in
       2|b|B)
@@ -360,7 +367,8 @@ do_dedup(){
         fi ;;
       4|d|D)
         confirm=""
-        read -r -p "    permanently delete $path ? type 'yes': " confirm </dev/tty 2>/dev/null || confirm=""
+        printf "    permanently delete %s ? type 'yes': " "$path" >"$tty"
+        read -r confirm <"$tty" || confirm=""
         if [[ "$confirm" == "yes" ]]; then
           rm -rf "$path" && info "    deleted $path" || err "    delete failed"
         else
