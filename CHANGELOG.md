@@ -7,6 +7,9 @@ versioning follows [SemVer](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- `update-all`: `--only <steps>` to run a subset (e.g. `apt,npm`), and a per-step **summary** (ok/warn/skip) at the end.
+- `tools-sync --dedup`: now also matches declared **release** tools by name (not just git tools).
+- `tests/`: bats unit tests for the pure helpers (`normalize_url`, `is_linux_bin`, `trim`), run in CI alongside shellcheck.
 - `uninstall.sh`: reverses the setup (unwires `update-all` from `~/.zshrc`, removes symlinks; `--purge` also removes `/opt/pentest-tools` and local config). Backs up `~/.zshrc`; does not undo one-off apt/impacket changes.
 - `tools-sync` release: **SHA256 integrity check** before install - verifies the downloaded asset against a checksum published in the release (manifest `sha_glob` or auto-detected `checksums.txt`/`SHA256SUMS`/`<file>.sha256`). Mismatch aborts; no checksum → warning (or skip with `KALI_SETUP_STRICT_SHA=1`).
 - `tools-sync --dedup`: finds scattered copies of declared tools across `$HOME`/`/opt` (matched by git remote or name), shows each copy's version vs the canonical one, and asks (numbered menu) to keep / backup (`$KALI_SETUP_BACKUP`, default `~/.local/share/kali-setup/backup`) / trash (`gio trash`) / delete (permanent, confirmed). Never touches `/opt/pentest-tools`; default action is keep.

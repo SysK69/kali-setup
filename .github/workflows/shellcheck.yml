@@ -11,11 +11,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install shellcheck + zsh
-        run: sudo apt-get update && sudo apt-get install -y shellcheck zsh
+      - name: Install shellcheck + zsh + bats
+        run: sudo apt-get update && sudo apt-get install -y shellcheck zsh bats
 
       - name: ShellCheck (bash)
-        run: shellcheck -x -s bash -S warning setup.sh bin/tools-sync.sh
+        run: shellcheck -x -s bash -S warning setup.sh bin/tools-sync.sh uninstall.sh
 
       - name: zsh syntax check (update-all)
         run: zsh -n shell/update-all.zsh
+
+      - name: bats unit tests
+        run: bats tests/

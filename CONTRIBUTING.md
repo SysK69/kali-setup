@@ -29,9 +29,10 @@ If you change `README.md`, keep `README.it.md` in sync (or note it in the PR).
 Run the same checks the CI runs:
 
 ```bash
-shellcheck -x -s bash -S warning setup.sh bin/tools-sync.sh
+shellcheck -x -s bash -S warning setup.sh bin/tools-sync.sh uninstall.sh
 zsh -n shell/update-all.zsh
-bash -n setup.sh bin/tools-sync.sh
+bash -n setup.sh bin/tools-sync.sh uninstall.sh
+bats tests/            # unit tests for the pure helpers
 ```
 
 CI (`.github/workflows/shellcheck.yml`) runs these on every push to `main` and

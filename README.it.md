@@ -73,7 +73,7 @@ Un comando, aggiorna tutto - e aggiorna sé stesso (step 1 = `git pull` di quest
 | `7` | **pip --user** | librerie Python (da `pip.list` locale) |
 | `8` | **/opt** | cloni git manuali in `/opt/pentest-tools/` |
 
-> Fonte unica: [`shell/update-all.zsh`](shell/update-all.zsh), sorgiato da `.zshrc`. Le modifiche sono attive dalla **shell successiva** (o `source ~/.zshrc`). `update-all --help` per i dettagli.
+> Fonte unica: [`shell/update-all.zsh`](shell/update-all.zsh), sorgiato da `.zshrc`. Le modifiche sono attive dalla **shell successiva** (o `source ~/.zshrc`). Stampa un **summary** per-step alla fine; esegui un sottoinsieme con `update-all --only apt,npm`. Vedi `update-all --help`.
 >
 > Per rimuovere: **`bash uninstall.sh`** scollega `update-all` da `~/.zshrc` e rimuove i symlink (`--purge` rimuove anche `/opt/pentest-tools` e la config locale). Non annulla le modifiche one-off di sistema (purge apt, impacket); `~/.zshrc` viene backuppato prima.
 
@@ -135,8 +135,9 @@ kali-setup/
 ├── bin/tools-sync.sh     # gestore /opt/pentest-tools (git + release, dedup, prune, import)
 ├── tools/{git,release}.list   # manifesti CONDIVISI
 ├── shell/update-all.zsh  # update-all() · single source of truth
+├── tests/tools-sync.bats # test unit bats (funzioni pure)
 ├── docs/index.html       # landing hacker (GitHub Pages, opzionale)
-├── .github/workflows/shellcheck.yml   # CI lint
+├── .github/workflows/shellcheck.yml   # CI lint + bats
 ├── README.md · README.it.md · CHANGELOG.md · CONTRIBUTING.md · LICENSE
 └── assets/banner.svg
 ```

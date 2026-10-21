@@ -292,14 +292,21 @@ do_prune(){
 # ─── DEDUP (find scattered copies of declared tools; keep/trash/backup) ───────
 do_dedup(){
   info "Scanning for scattered copies of declared tools (\$HOME ~ /opt, excl. $TOOLS_DIR)..."
-  # declared git tools: parallel arrays name[] + normalized url[]
+  # declared tools: parallel arrays name[] + normalized url[].
+  # git tools carry a remote (matched by url in pass A); release tools have an
+  # empty url and are matched by folder name only (pass B).
   local -a names=() urls=()
   while IFS='|' read -r name url _; do
     name="$(trim "$name")"; url="$(trim "$url")"
     [[ -z "$name" ]] && continue
     names+=("$name"); urls+=("$(normalize_url "$url")")
   done < <(cat <(read_manifest "$SHARED_GIT") <(read_manifest "$LOCAL_GIT"))
-  [[ ${#names[@]} -eq 0 ]] && { warn "no git tools declared - nothing to dedup"; return 0; }
+  while IFS='|' read -r name _ _; do
+    name="$(trim "$name")"
+    [[ -z "$name" ]] && continue
+    names+=("$name"); urls+=("")   # release tool: name-match only
+  done < <(cat <(read_manifest "$SHARED_REL") <(read_manifest "$LOCAL_REL"))
+  [[ ${#names[@]} -eq 0 ]] && { warn "no tools declared - nothing to dedup"; return 0; }
 
   # collect candidates as "name<TAB>path", unique by path
   local found="" gitdir d url norm i
@@ -382,13 +389,20 @@ do_dedup(){
 usage(){ awk 'NR>1{ if($0 ~ /^#/){sub(/^# ?/,"");print} else exit }' "$0"; }
 
 # ─── MAIN ────────────────────────────────────────────────────────────────────
-case "${1:-}" in
-  --help|-h) usage; exit 0 ;;
-  --import)  do_import; exit 0 ;;
-  --prune)   ensure_tools_dir; do_prune; exit 0 ;;
-  --dedup)   do_dedup; exit 0 ;;
-  --git-only)     ensure_tools_dir; sync_git; exit 0 ;;
-  --release-only) ensure_tools_dir; sync_release; exit 0 ;;
-  "")        ensure_tools_dir; sync_git; sync_release; exit 0 ;;
-  *) err "unknown option: $1"; usage; exit 1 ;;
-esac
+main(){
+  case "${1:-}" in
+    --help|-h) usage; exit 0 ;;
+    --import)  do_import; exit 0 ;;
+    --prune)   ensure_tools_dir; do_prune; exit 0 ;;
+    --dedup)   do_dedup; exit 0 ;;
+    --git-only)     ensure_tools_dir; sync_git; exit 0 ;;
+    --release-only) ensure_tools_dir; sync_release; exit 0 ;;
+    "")        ensure_tools_dir; sync_git; sync_release; exit 0 ;;
+    *) err "unknown option: $1"; usage; exit 1 ;;
+  esac
+}
+
+# run only when executed directly, not when sourced (e.g. by the test suite)
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+  main "$@"
+fi
