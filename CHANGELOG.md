@@ -6,6 +6,8 @@ versioning follows [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-10-21
+
 ### Added
 - Docs + `setup.sh` output: clarified this is a **per-user** install (wiring in `~/.zshrc`, config in `~/.config/kali-setup`, `/opt/pentest-tools` user-owned) - tied to the account; back up `~/.config/kali-setup/`.
 - `update-all --dry-run`: preview the apt full-upgrade (`apt -s full-upgrade`) and the Kali release check without changing anything.
