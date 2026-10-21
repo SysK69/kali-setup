@@ -1,8 +1,13 @@
 # release.list — SHARED binaries from GitHub Releases (latest release)
-# Format:  name | owner/repo | glob_asset
+# Format:  name | owner/repo | glob_asset [| sha_glob]
 # - name       : folder under /opt/pentest-tools/
 # - owner/repo : GitHub repo
 # - glob_asset : pattern (glob, not regex) of the asset to download from the release
+# - sha_glob   : OPTIONAL glob of the checksum asset (e.g. SHA256SUMS). If omitted,
+#                tools-sync auto-detects common names (<file>.sha256, checksums.txt,
+#                SHA256SUMS, *_checksums.txt). SHA256 is verified before install:
+#                mismatch → aborts; no checksum published → installs with a warning
+#                (set KALI_SETUP_STRICT_SHA=1 to skip unverifiable downloads instead).
 # tools-sync downloads only if the release tag changed (tracked in .version).
 # .gz files are decompressed, binaries made executable (chmod +x).
 # Empty lines and lines starting with # are ignored.

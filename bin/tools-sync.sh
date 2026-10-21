@@ -139,13 +139,58 @@ print(f"{tag}\t{url}")
 ' "$glob"
 }
 
+# download url of the first release asset matching a glob (empty if none)
+release_asset_url(){
+  local repo="$1" glob="$2" token json
+  token="$(gh_token)"
+  local -a hdr=(-H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28")
+  [[ -n "$token" ]] && hdr+=(-H "Authorization: Bearer $token")
+  json="$(curl -fsSL "${hdr[@]}" "https://api.github.com/repos/$repo/releases/latest" 2>/dev/null)" || return 1
+  printf '%s' "$json" | python3 -I -c '
+import sys, json, fnmatch
+d = json.load(sys.stdin)
+print(next((a["browser_download_url"] for a in d.get("assets", []) if fnmatch.fnmatch(a["name"], sys.argv[1])), ""))
+' "$glob"
+}
+
+# verify sha256 of a downloaded asset against a checksum published in the release.
+#   args: file repo [sha_glob]
+#   returns: 0 verified · 1 MISMATCH · 2 no checksum available (can't verify)
+verify_sha(){
+  local file="$1" repo="$2" sha_glob="$3"
+  command -v sha256sum >/dev/null 2>&1 || { warn "    sha256sum missing — cannot verify"; return 2; }
+  local base actual; base="$(basename "$file")"
+  actual="$(sha256sum "$file" | awk '{print $1}')"
+  # candidate checksum assets: manifest-provided first, then common conventions
+  local -a cands=()
+  [[ -n "$sha_glob" ]] && cands+=("$sha_glob")
+  cands+=("${base}.sha256" "${base}.sha256sum" "checksums.txt" "SHA256SUMS" "sha256sum.txt" "*_checksums.txt" "*checksums*.txt" "*.sha256")
+  local g aurl tmp expected
+  for g in "${cands[@]}"; do
+    aurl="$(release_asset_url "$repo" "$g")" || continue
+    [[ -z "$aurl" ]] && continue
+    tmp="$(mktemp)" || continue
+    if ! curl -fsSL -o "$tmp" "$aurl" 2>/dev/null; then rm -f "$tmp"; continue; fi
+    # line listing our file, else a bare single hash (per-file .sha256)
+    expected="$(grep -F "$base" "$tmp" 2>/dev/null | grep -oiE '[0-9a-f]{64}' | head -1)"
+    [[ -z "$expected" ]] && expected="$(grep -oiE '[0-9a-f]{64}' "$tmp" | head -1)"
+    rm -f "$tmp"
+    [[ -z "$expected" ]] && continue
+    if [[ "${actual,,}" == "${expected,,}" ]]; then
+      info "    sha256 verified ($g)"; return 0
+    fi
+    err "    sha256 MISMATCH — expected ${expected:0:12}… got ${actual:0:12}…"; return 1
+  done
+  return 2
+}
+
 sync_release(){
   info "Sync binaries from GitHub Releases → $TOOLS_DIR"
   command -v curl  >/dev/null || { err "curl missing"; return 1; }
   command -v python3 >/dev/null || { err "python3 missing"; return 1; }
   local any=0
-  while IFS='|' read -r name repo glob; do
-    name="$(trim "$name")"; repo="$(trim "$repo")"; glob="$(trim "$glob")"
+  while IFS='|' read -r name repo glob sha_glob; do
+    name="$(trim "$name")"; repo="$(trim "$repo")"; glob="$(trim "$glob")"; sha_glob="$(trim "$sha_glob")"
     [[ -z "$name" || -z "$repo" || -z "$glob" ]] && continue
     any=1
     local dest="$TOOLS_DIR/$name"
@@ -167,6 +212,16 @@ sync_release(){
     mkdir -p "$dest"
     local fname; fname="$(basename "$url")"
     if curl -fsSL -o "$dest/$fname" "$url"; then
+      # integrity check on the raw downloaded asset (before decompressing)
+      local rc; verify_sha "$dest/$fname" "$repo" "$sha_glob"; rc=$?
+      if [[ $rc -eq 1 ]]; then
+        err "  ✗ $name: checksum mismatch → NOT installing"; rm -f "$dest/$fname"; continue
+      elif [[ $rc -eq 2 ]]; then
+        if [[ "${KALI_SETUP_STRICT_SHA:-0}" == "1" ]]; then
+          err "  ✗ $name: no published checksum + STRICT mode → skip"; rm -f "$dest/$fname"; continue
+        fi
+        warn "  ⚠ $name: no published checksum — installed UNVERIFIED"
+      fi
       # decompress .gz
       if [[ "$fname" == *.gz ]]; then gunzip -f "$dest/$fname" && fname="${fname%.gz}"; fi
       # make linux scripts/binaries executable (not .exe/.dll/.ps1)

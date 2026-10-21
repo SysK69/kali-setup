@@ -7,6 +7,7 @@ versioning follows [SemVer](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- `tools-sync` release: **SHA256 integrity check** before install — verifies the downloaded asset against a checksum published in the release (manifest `sha_glob` or auto-detected `checksums.txt`/`SHA256SUMS`/`<file>.sha256`). Mismatch aborts; no checksum → warning (or skip with `KALI_SETUP_STRICT_SHA=1`).
 - `tools-sync --dedup`: finds scattered copies of declared tools across `$HOME`/`/opt` (matched by git remote or name), shows each copy's version vs the canonical one, and asks to keep / trash (`gio trash`) / backup (`$KALI_SETUP_BACKUP`, default `~/.local/share/kali-setup/backup`). Never touches `/opt/pentest-tools`; default action is keep.
 - `LICENSE` (MIT).
 - GitHub Actions CI (`lint`): ShellCheck on `setup.sh` + `bin/tools-sync.sh`, `zsh -n` on `shell/update-all.zsh`.
