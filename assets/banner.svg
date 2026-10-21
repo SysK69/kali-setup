@@ -1,38 +1,75 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="820" height="230" viewBox="0 0 820 230" role="img" aria-label="KALI SETUP">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 300" width="820" height="300" font-family="'Fira Code','DejaVu Sans Mono','Courier New',monospace" role="img" aria-label="KALI SETUP">
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#0b0f0b"/>
-      <stop offset="1" stop-color="#060806"/>
+    <linearGradient id="screen" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#071007"/>
+      <stop offset="0.5" stop-color="#040a06"/>
+      <stop offset="1" stop-color="#010401"/>
     </linearGradient>
-    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="3.2" result="b"/>
-      <feMerge>
-        <feMergeNode in="b"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
-    </filter>
-    <pattern id="scan" width="4" height="4" patternUnits="userSpaceOnUse">
-      <rect width="4" height="1" fill="#00ff41" opacity="0.04"/>
+    <radialGradient id="vignette" cx="0.5" cy="0.45" r="0.75">
+      <stop offset="0.55" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0.65"/>
+    </radialGradient>
+    <pattern id="scan" width="1" height="3" patternUnits="userSpaceOnUse">
+      <rect width="1" height="3" fill="#000000"/>
+      <rect width="1" height="1" fill="#0bff6a" opacity="0.05"/>
     </pattern>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="1.4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="softglow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
   </defs>
 
-  <rect x="1" y="1" width="818" height="228" rx="14" fill="url(#bg)" stroke="#00ff41" stroke-opacity="0.45" stroke-width="2"/>
-  <rect x="1" y="1" width="818" height="228" rx="14" fill="url(#scan)"/>
+  <!-- screen -->
+  <rect x="0" y="0" width="820" height="300" rx="10" fill="url(#screen)"/>
+  <rect x="0" y="0" width="820" height="300" rx="10" fill="url(#scan)"/>
 
-  <!-- window dots -->
-  <circle cx="28" cy="26" r="5" fill="#ff5f56"/>
-  <circle cx="46" cy="26" r="5" fill="#ffbd2e"/>
-  <circle cx="64" cy="26" r="5" fill="#27c93f"/>
-  <text x="90" y="30" font-family="'Fira Code',monospace" font-size="12" fill="#3a5a3a">root@kali: ~/kali-setup</text>
+  <!-- terminal chrome -->
+  <rect x="8" y="8" width="804" height="284" rx="8" fill="none" stroke="#0e3d22" stroke-width="1.5"/>
+  <line x1="8" y1="34" x2="812" y2="34" stroke="#0e3d22" stroke-width="1.5"/>
+  <circle cx="26" cy="21" r="5" fill="#ff5f56"/>
+  <circle cx="44" cy="21" r="5" fill="#ffbd2e"/>
+  <circle cx="62" cy="21" r="5" fill="#27c93f"/>
+  <text x="410" y="25" fill="#2f7d4e" font-size="12" text-anchor="middle" letter-spacing="1">root@kali: ~/kali-setup — zsh</text>
 
-  <!-- title -->
-  <text x="410" y="120" text-anchor="middle" font-family="'Fira Code','Courier New',monospace" font-weight="700" font-size="72" letter-spacing="6" fill="#00ff41" filter="url(#glow)">KALI SETUP</text>
+  <!-- background recon output (dim, sets the mood) -->
+  <g font-size="11.5" opacity="0.5" letter-spacing="0.5">
+    <text x="28" y="58" fill="#166b38">200   GET   /setup.sh            9775 Ch   "orchestrator"</text>
+    <text x="28" y="76" fill="#124f2b">200   GET   /bin/tools-sync.sh    manifests · git+release</text>
+    <text x="28" y="94" fill="#166b38">200   GET   /shell/update-all.zsh single source of truth</text>
+    <text x="28" y="112" fill="#124f2b">301   GET   /opt/pentest-tools/   → declarative sync</text>
+  </g>
+
+  <!-- glitch title -->
+  <g font-size="70" font-weight="700" letter-spacing="6">
+    <text x="42" y="188" fill="#00e5ff" opacity="0.55" filter="url(#softglow)" transform="translate(-3,-2)">KALI SETUP</text>
+    <text x="42" y="188" fill="#ff2d9b" opacity="0.55" filter="url(#softglow)" transform="translate(3,2)">KALI SETUP</text>
+    <text x="42" y="188" fill="#2bff88" filter="url(#glow)">KALI SETUP</text>
+  </g>
+
+  <!-- subtitle -->
+  <text x="44" y="214" fill="#9affc4" font-size="14" letter-spacing="0.5">// weaponize a clean Kali in one shot - keep every box in sync</text>
 
   <!-- prompt line -->
-  <text x="410" y="165" text-anchor="middle" font-family="'Fira Code',monospace" font-size="17" fill="#8bffb0">
-    <tspan fill="#00ff41">root@kali</tspan><tspan fill="#3a5a3a">:~#</tspan> weaponize a clean Kali · keep every box in sync<tspan fill="#00ff41" font-weight="700"> █</tspan>
-  </text>
+  <g font-size="15" letter-spacing="0.5">
+    <text x="44" y="246" fill="#2bff88" filter="url(#glow)">root@kali:~#</text>
+    <text x="172" y="246" fill="#9affc4">./setup.sh &amp;&amp; update-all</text>
+    <rect x="414" y="234" width="9" height="16" fill="#2bff88">
+      <animate attributeName="opacity" values="1;1;0;0" dur="1.1s" repeatCount="indefinite"/>
+    </rect>
+  </g>
 
   <!-- tags -->
-  <text x="410" y="200" text-anchor="middle" font-family="'Fira Code',monospace" font-size="13" fill="#3a7a4a" letter-spacing="2">[ bash · zsh · pipx · impacket · netexec · evil-winrm · auto-sync ]</text>
+  <g font-size="11.5" letter-spacing="1">
+    <text x="44" y="278" fill="#166b38">[ bash · zsh ]</text>
+    <text x="150" y="278" fill="#166b38">[ kali-rolling ]</text>
+    <text x="280" y="278" fill="#166b38">[ pipx · impacket · netexec ]</text>
+    <text x="512" y="278" fill="#ff2d9b">[ multi-host auto-sync ]</text>
+  </g>
+
+  <!-- CRT vignette on top -->
+  <rect x="0" y="0" width="820" height="300" rx="10" fill="url(#vignette)"/>
 </svg>
