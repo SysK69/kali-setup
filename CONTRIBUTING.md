@@ -14,7 +14,7 @@ outside `~/.zshrc`, `~/.config/kali-setup/`, and `/opt/pentest-tools/`.
 
 ## Language
 
-Everything in the repo is **English** — code, comments, output strings, and
+Everything in the repo is **English** - code, comments, output strings, and
 docs. The only exception is `README.it.md` (Italian translation of the README).
 If you change `README.md`, keep `README.it.md` in sync (or note it in the PR).
 
@@ -41,7 +41,7 @@ on every PR. Keep it green.
 
 - **Commits**: [Conventional Commits](https://www.conventionalcommits.org/)
   (`feat:`, `fix:`, `docs:`, `ci:`, `refactor:`…).
-- **Idempotent**: scripts must be safe to re-run — guard every step, skip what's
+- **Idempotent**: scripts must be safe to re-run - guard every step, skip what's
   already done.
 - **Non-destructive by default**: nothing is removed without explicit
   confirmation (`--prune` is opt-in and prompts per tool).

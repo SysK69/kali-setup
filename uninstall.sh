@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# uninstall.sh — kali-setup
+# uninstall.sh - kali-setup
 # Reverses what setup.sh wired up, as far as it is safely reversible:
 #   - unwires update-all from ~/.zshrc (removes the kali-setup block; backs up first)
 #   - removes ~/.local/bin symlinks that point into /opt/pentest-tools
@@ -40,13 +40,13 @@ esac
 if grep -q "KALI_SETUP_REPO=" "$ZSHRC" 2>/dev/null; then
     cp "$ZSHRC" "$ZSHRC.bak.$(date +%Y%m%d%H%M%S)"
     info "Backed up $ZSHRC"
-    # remove the block: the guide comment, the export, and the source line
-    sed -i '/# kali-setup — update-all/,/update-all\.zsh"/d' "$ZSHRC"
+    # remove the 3 lines individually (dash-agnostic: matches old em dash or new hyphen)
+    sed -i -E '/^# kali-setup .* update-all/d; /^export KALI_SETUP_REPO=/d; /source .*\/update-all\.zsh"?/d' "$ZSHRC"
     # drop a possible trailing blank line left behind at EOF
     sed -i -e :a -e '/^\n*$/{$d;N;ba}' "$ZSHRC"
     info "Unwired update-all from $ZSHRC"
 else
-    info "update-all not wired in $ZSHRC — nothing to unwire"
+    info "update-all not wired in $ZSHRC - nothing to unwire"
 fi
 
 # ─── 2. REMOVE ~/.local/bin SYMLINKS POINTING INTO /opt/pentest-tools ──────
@@ -85,7 +85,7 @@ else
 fi
 
 echo ""
-info "Done. Open a new shell (or 'source ~/.zshrc') — update-all is gone."
+info "Done. Open a new shell (or 'source ~/.zshrc') - update-all is gone."
 info "To also delete this cloned repo, run:  rm -rf \"$SCRIPT_DIR\""
 warn "Note: apt purges, impacket reinstall and the PATH line from setup.sh were NOT reverted."
 warn "      Pre-setup backups (if any): $(ls -1 "$ZSHRC".bak.* 2>/dev/null | tail -1 || echo 'none')"

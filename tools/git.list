@@ -1,4 +1,4 @@
-# git.list — SHARED tools installed via `git clone` into /opt/pentest-tools/
+# git.list - SHARED tools installed via `git clone` into /opt/pentest-tools/
 # Format:  name | git_url
 # - name : folder under /opt/pentest-tools/
 # - url  : repo to clone; update-all runs `git pull` on every run

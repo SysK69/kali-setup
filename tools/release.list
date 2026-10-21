@@ -1,4 +1,4 @@
-# release.list — SHARED binaries from GitHub Releases (latest release)
+# release.list - SHARED binaries from GitHub Releases (latest release)
 # Format:  name | owner/repo | glob_asset [| sha_glob]
 # - name       : folder under /opt/pentest-tools/
 # - owner/repo : GitHub repo

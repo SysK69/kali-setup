@@ -108,7 +108,7 @@
 
 <header>
   <h1 class="glitch" data-t="KALI SETUP">KALI SETUP</h1>
-  <div class="tag"><span class="p">root@kali:~#</span> weaponize a clean Kali in one shot — keep every box in sync</div>
+  <div class="tag"><span class="p">root@kali:~#</span> weaponize a clean Kali in one shot - keep every box in sync</div>
   <div class="badges">
     <span class="badge">BASH · ZSH</span>
     <span class="badge">KALI ROLLING</span>
@@ -135,8 +135,8 @@
 
   <section>
     <h2>what it is</h2>
-    <p><b>kali-setup</b> is your pentest environment as <b>code</b>: a repo that takes any Kali — freshly installed or already messy — and brings it to a known, clean, <b>reproducible</b> state, then keeps it updated and <b>in sync</b> across all your machines.</p>
-    <p>Instead of remembering by hand what you installed, where and with which package manager, <b>you declare it once</b> in this repo. From there, any Kali becomes identical with one command — and stays that way over time.</p>
+    <p><b>kali-setup</b> is your pentest environment as <b>code</b>: a repo that takes any Kali - freshly installed or already messy - and brings it to a known, clean, <b>reproducible</b> state, then keeps it updated and <b>in sync</b> across all your machines.</p>
+    <p>Instead of remembering by hand what you installed, where and with which package manager, <b>you declare it once</b> in this repo. From there, any Kali becomes identical with one command - and stays that way over time.</p>
     <p style="color:var(--mint)">clone → <code>setup.sh</code> → ready attacker box. Every week <code>update-all</code> and everything is fresh. Add a tool once, it shows up on every Kali.</p>
   </section>
 
@@ -168,14 +168,14 @@
   <section>
     <h2>setup.sh --steps</h2>
     <div class="steps">
-      <div class="step"><div class="n">01</div><div><b>AUDIT</b> — initial state: PATH, pipx, apt pentest tools</div></div>
-      <div class="step"><div class="n">02</div><div><b>FIX PATH</b> — removes venvs from PATH · <code>~/.local/bin</code> before <code>/usr/bin</code></div></div>
-      <div class="step rm"><div class="n">03</div><div><b>PURGE</b> — crackmapexec · dirbuster · zenmap · wfuzz (obsolete apt)</div></div>
-      <div class="step"><div class="n">04</div><div><b>IMPACKET</b> — cleans real scripts · reinstalls via pipx from <code>fortra/impacket</code></div></div>
-      <div class="step rm"><div class="n">05</div><div><b>LEGACY</b> — removes old bloodhound pipx</div></div>
-      <div class="step"><div class="n">06</div><div><b>DEPS</b> — libyaml-dev (fixes gem psych)</div></div>
-      <div class="step"><div class="n">07</div><div><b>TOOLS</b> — creates <code>/opt/pentest-tools</code> · installs tools from manifests · scaffolds local lists</div></div>
-      <div class="step"><div class="n">08</div><div><b>ARM</b> — wires update-all into <code>~/.zshrc</code> (source-based auto-sync)</div></div>
+      <div class="step"><div class="n">01</div><div><b>AUDIT</b> - initial state: PATH, pipx, apt pentest tools</div></div>
+      <div class="step"><div class="n">02</div><div><b>FIX PATH</b> - removes venvs from PATH · <code>~/.local/bin</code> before <code>/usr/bin</code></div></div>
+      <div class="step rm"><div class="n">03</div><div><b>PURGE</b> - crackmapexec · dirbuster · zenmap · wfuzz (obsolete apt)</div></div>
+      <div class="step"><div class="n">04</div><div><b>IMPACKET</b> - cleans real scripts · reinstalls via pipx from <code>fortra/impacket</code></div></div>
+      <div class="step rm"><div class="n">05</div><div><b>LEGACY</b> - removes old bloodhound pipx</div></div>
+      <div class="step"><div class="n">06</div><div><b>DEPS</b> - libyaml-dev (fixes gem psych)</div></div>
+      <div class="step"><div class="n">07</div><div><b>TOOLS</b> - creates <code>/opt/pentest-tools</code> · installs tools from manifests · scaffolds local lists</div></div>
+      <div class="step"><div class="n">08</div><div><b>ARM</b> - wires update-all into <code>~/.zshrc</code> (source-based auto-sync)</div></div>
     </div>
   </section>
 
@@ -240,7 +240,7 @@
       <div class="card"><h3>apt</h3>system dependencies, tools with no pipx alternative</div>
       <div class="card"><h3>pipx</h3>Python CLI tools (impacket, netexec, bloodyad, dploot, git-dumper)</div>
       <div class="card"><h3>gem</h3>Ruby tools (evil-winrm)</div>
-      <div class="card"><h3>npm install -g</h3>global Node.js tools — <code>--include=optional</code> + <code>--allow-scripts</code> on npm ≥11</div>
+      <div class="card"><h3>npm install -g</h3>global Node.js tools - <code>--include=optional</code> + <code>--allow-scripts</code> on npm ≥11</div>
       <div class="card"><h3>/opt/pentest-tools/</h3>manual / git / release tools, managed by tools-sync</div>
       <div class="card"><h3>canonical PATH</h3><code>~/.local/bin → ~/.npm-global/bin → /usr/local/bin → /usr/bin</code><br><span class="warn">never venvs/*/bin in PATH</span></div>
     </div>
@@ -281,7 +281,7 @@
     ['c-d','Cloning into \'kali-setup\'... done.\n\n'],
     ['c-g','root@kali:~# '],['c-m','cd kali-setup && bash setup.sh\n'],
     ['c-g','[+] '],['c-d','AUDIT initial state\n'],
-    ['c-g','[+] '],['c-d','FIX PATH — ~/.local/bin takes priority\n'],
+    ['c-g','[+] '],['c-d','FIX PATH - ~/.local/bin takes priority\n'],
     ['c-r','[-] '],['c-d','PURGE crackmapexec dirbuster zenmap wfuzz\n'],
     ['c-g','[+] '],['c-d','IMPACKET reinstalled via pipx (fortra)\n'],
     ['c-g','[+] '],['c-d','ARM update-all → ~/.zshrc\n\n'],

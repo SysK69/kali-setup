@@ -2,7 +2,7 @@
 
 <img src="assets/banner.svg" alt="KALI SETUP" width="780">
 
-**`// weaponize a clean Kali in one shot — keep every box in sync`**
+**`// weaponize a clean Kali in one shot - keep every box in sync`**
 
 [![Bash](https://img.shields.io/badge/shell-bash%20%7C%20zsh-121011?style=for-the-badge&logo=gnubash&logoColor=00ff41)](#)
 [![Kali](https://img.shields.io/badge/Kali-rolling-367BF0?style=for-the-badge&logo=kalilinux&logoColor=white)](#)
@@ -17,7 +17,7 @@
 
 ## `> COS'È`
 
-**kali-setup** è l'ambiente pentest come **codice**. Prende una Kali qualsiasi — nuova o incasinata — la porta a uno stato pulito e riproducibile, e la tiene aggiornata e **sincronizzata** su tutte le tue macchine.
+**kali-setup** è l'ambiente pentest come **codice**. Prende una Kali qualsiasi - nuova o incasinata - la porta a uno stato pulito e riproducibile, e la tiene aggiornata e **sincronizzata** su tutte le tue macchine.
 
 Dichiari *cosa* vuoi una volta (script + manifesti); qualsiasi Kali diventa identica con un comando, e resta tale. Niente più PATH inquinato, impacket installato in tre modi, o binari in `/opt` scaricati mesi fa e mai aggiornati.
 
@@ -60,7 +60,7 @@ Ogni step è guardato e salta ciò che è già a posto. Rilanciabile senza danni
 
 ## `> update-all()`
 
-Un comando, aggiorna tutto — e aggiorna sé stesso (step 1 = `git pull` di questo repo).
+Un comando, aggiorna tutto - e aggiorna sé stesso (step 1 = `git pull` di questo repo).
 
 | # | target | cosa |
 |---|--------|------|
@@ -79,7 +79,7 @@ Un comando, aggiorna tutto — e aggiorna sé stesso (step 1 = `git pull` di que
 
 ---
 
-## `> TOOL MANAGER` — `/opt/pentest-tools/`
+## `> TOOL MANAGER` - `/opt/pentest-tools/`
 
 Dichiari *cosa* vuoi in un manifesto; `tools-sync.sh` lo ricostruisce identico su ogni Kali.
 
@@ -100,11 +100,11 @@ bin/tools-sync.sh --prune         # rimuove tool non dichiarati (opt-in, chiede)
 - Tool **condivisi** in `tools/*.list` (committati) → si propagano su tutte le macchine a `update-all`.
 - Voci **locali / per-macchina** in `~/.config/kali-setup/local.*.list` → fuori dal git.
 - I binari release linux ottengono un symlink stabile `~/.local/bin/<nome>` → esegui `chisel`, non `chisel_1.12.0_linux_amd64`.
-- `--dedup` trova vecchie copie sparse di un tool (per remote git o nome), mostra ogni versione accanto a quella canonica, e chiede **keep / trash / backup** — senza mai toccare `/opt/pentest-tools`.
+- `--dedup` trova vecchie copie sparse di un tool (per remote git o nome), mostra ogni versione accanto a quella canonica, e chiede **keep / trash / backup** - senza mai toccare `/opt/pentest-tools`.
 
 ---
 
-## `> MULTI-HOST SYNC` — *strategia B*
+## `> MULTI-HOST SYNC` - *strategia B*
 
 ```
    KALI #1 ──git push──▶ github.com/SysK69/kali-setup
@@ -147,7 +147,7 @@ Locali, per-macchina (fuori dal repo): `~/.config/kali-setup/{local.git.list,loc
 
 ## `> CONTRIBUTING` · `> LICENSE`
 
-Vedi [CONTRIBUTING.md](CONTRIBUTING.md) — la CI gira `shellcheck` + `zsh -n` su ogni push/PR.
+Vedi [CONTRIBUTING.md](CONTRIBUTING.md) - la CI gira `shellcheck` + `zsh -n` su ogni push/PR.
 Licenza [MIT](LICENSE) © SysK69.
 
 ---

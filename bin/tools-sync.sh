@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# tools-sync.sh — manages the tools in /opt/pentest-tools/ from declarative manifests.
+# tools-sync.sh - manages the tools in /opt/pentest-tools/ from declarative manifests.
 #
 # SHARED manifests (versioned in the repo):    tools/git.list   tools/release.list
 # LOCAL manifests (per-machine, not in git):   ~/.config/kali-setup/local.git.list
@@ -158,7 +158,7 @@ print(next((a["browser_download_url"] for a in d.get("assets", []) if fnmatch.fn
 #   returns: 0 verified · 1 MISMATCH · 2 no checksum available (can't verify)
 verify_sha(){
   local file="$1" repo="$2" sha_glob="$3"
-  command -v sha256sum >/dev/null 2>&1 || { warn "    sha256sum missing — cannot verify"; return 2; }
+  command -v sha256sum >/dev/null 2>&1 || { warn "    sha256sum missing - cannot verify"; return 2; }
   local base actual; base="$(basename "$file")"
   actual="$(sha256sum "$file" | awk '{print $1}')"
   # candidate checksum assets: manifest-provided first, then common conventions
@@ -179,7 +179,7 @@ verify_sha(){
     if [[ "${actual,,}" == "${expected,,}" ]]; then
       info "    sha256 verified ($g)"; return 0
     fi
-    err "    sha256 MISMATCH — expected ${expected:0:12}… got ${actual:0:12}…"; return 1
+    err "    sha256 MISMATCH - expected ${expected:0:12}… got ${actual:0:12}…"; return 1
   done
   return 2
 }
@@ -220,7 +220,7 @@ sync_release(){
         if [[ "${KALI_SETUP_STRICT_SHA:-0}" == "1" ]]; then
           err "  ✗ $name: no published checksum + STRICT mode → skip"; rm -f "$dest/$fname"; continue
         fi
-        warn "  ⚠ $name: no published checksum — installed UNVERIFIED"
+        warn "  ⚠ $name: no published checksum - installed UNVERIFIED"
       fi
       # decompress .gz
       if [[ "$fname" == *.gz ]]; then gunzip -f "$dest/$fname" && fname="${fname%.gz}"; fi
@@ -241,7 +241,7 @@ sync_release(){
 
 # ─── IMPORT (suggests, does not move) ────────────────────────────────────────
 do_import(){
-  info "Scanning git repos (/opt/pentest-tools ~ \$HOME ~ /usr/share) — SUGGESTIONS ONLY:"
+  info "Scanning git repos (/opt/pentest-tools ~ \$HOME ~ /usr/share) - SUGGESTIONS ONLY:"
   echo ""
   local found=0
   while IFS= read -r gitdir; do
@@ -269,7 +269,7 @@ do_prune(){
   local declared
   declared="$( { read_manifest "$SHARED_GIT"; read_manifest "$LOCAL_GIT"; read_manifest "$SHARED_REL"; read_manifest "$LOCAL_REL"; } \
                | awk -F'|' '{gsub(/^[ \t]+|[ \t]+$/,"",$1); if($1!="") print $1}' | sort -u)"
-  warn "PRUNE — removes tools in $TOOLS_DIR NOT present in the manifests."
+  warn "PRUNE - removes tools in $TOOLS_DIR NOT present in the manifests."
   local removed=0
   for dir in "$TOOLS_DIR"/*/; do
     [[ -d "$dir" ]] || continue
@@ -299,11 +299,11 @@ do_dedup(){
     [[ -z "$name" ]] && continue
     names+=("$name"); urls+=("$(normalize_url "$url")")
   done < <(cat <(read_manifest "$SHARED_GIT") <(read_manifest "$LOCAL_GIT"))
-  [[ ${#names[@]} -eq 0 ]] && { warn "no git tools declared — nothing to dedup"; return 0; }
+  [[ ${#names[@]} -eq 0 ]] && { warn "no git tools declared - nothing to dedup"; return 0; }
 
   # collect candidates as "name<TAB>path", unique by path
   local found="" gitdir d url norm i
-  # pass A — git repos matched by remote url
+  # pass A - git repos matched by remote url
   while IFS= read -r gitdir; do
     d="$(dirname "$gitdir")"
     case "$d/" in "$TOOLS_DIR"/*|"$REPO_DIR"/*) continue;; esac
@@ -314,7 +314,7 @@ do_dedup(){
       if [[ "$norm" == "${urls[$i]}" ]]; then found+="${names[$i]}"$'\t'"$d"$'\n'; break; fi
     done
   done < <(find "$HOME" /opt -maxdepth 6 -type d -name .git 2>/dev/null)
-  # pass B — dirs matched by basename (catches non-git copies)
+  # pass B - dirs matched by basename (catches non-git copies)
   for i in "${!names[@]}"; do
     while IFS= read -r d; do
       case "$d/" in "$TOOLS_DIR"/*|"$REPO_DIR"/*) continue;; esac
@@ -329,7 +329,7 @@ do_dedup(){
   echo ""
   warn "Scattered copies found. For each: keep / trash / backup."
   echo "  Note: you don't need to keep these old copies, but instead of trashing them"
-  echo "  you can move them to the backup folder — at the cost of disk space."
+  echo "  you can move them to the backup folder - at the cost of disk space."
   echo "  Backup folder: $BACKUP_DIR"
   echo ""
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# setup.sh — kali-setup
+# setup.sh - kali-setup
 # Configures a clean Kali: removes duplicates, fixes PATH, installs up-to-date tools via pipx,
 # and wires the update-all function into ~/.zshrc.
 # Usage: bash setup.sh
@@ -21,7 +21,7 @@ section() { echo -e "\n${YLW}═════════════════
 # ─── 1. INITIAL STATE AUDIT ────────────────────────────────────────────────
 section "1. INITIAL STATE AUDIT"
 
-info "System Python: $(which python3) — $(/usr/bin/python3 --version 2>/dev/null)"
+info "System Python: $(which python3) - $(/usr/bin/python3 --version 2>/dev/null)"
 info "Current PATH:"
 echo "$PATH" | tr ':' '\n' | sed 's/^/    /'
 
@@ -37,15 +37,15 @@ dpkg -l 2>/dev/null | grep -E "^ii.*(impacket|netexec|bloodhound|crackmapexec|ce
 
 echo ""
 info "Suspicious PATH entries (venvs in PATH):"
-echo "$PATH" | tr ':' '\n' | grep -i "venv\|pipx/venvs" && warn "venv entries found in PATH — should be removed" || info "PATH clean"
+echo "$PATH" | tr ':' '\n' | grep -i "venv\|pipx/venvs" && warn "venv entries found in PATH - should be removed" || info "PATH clean"
 
-# ─── 2. FIX PATH — remove venvs from PATH in .zshrc ──────────────────────
+# ─── 2. FIX PATH - remove venvs from PATH in .zshrc ──────────────────────
 section "2. FIX PATH"
 
 ZSHRC="$HOME/.zshrc"
 
 if grep -q "pipx/venvs" "$ZSHRC" 2>/dev/null; then
-    warn "venv entry found in PATH of $ZSHRC — removing..."
+    warn "venv entry found in PATH of $ZSHRC - removing..."
     sed -i '/pipx\/venvs/d' "$ZSHRC"
     info "Removed"
 else
@@ -54,7 +54,7 @@ fi
 
 # Make sure ~/.local/bin comes before /usr/bin
 if ! grep -q 'HOME/.local/bin' "$ZSHRC" 2>/dev/null; then
-    warn "\$HOME/.local/bin not in PATH — adding..."
+    warn "\$HOME/.local/bin not in PATH - adding..."
     echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$ZSHRC"
     info "Added \$HOME/.local/bin to PATH"
 else
@@ -81,7 +81,7 @@ else
     info "No obsolete tools found"
 fi
 
-# ─── 4. FIX IMPACKET — remove real files, reinstall via pipx ───────────────
+# ─── 4. FIX IMPACKET - remove real files, reinstall via pipx ───────────────
 section "4. FIX IMPACKET"
 
 # impacket scripts to KEEP (they are not part of impacket)
@@ -90,7 +90,7 @@ KEEP_SCRIPTS="dumppdf.py pdf2txt.py fetch_tles.py"
 # Idempotency: if impacket is already installed via pipx AND secretsdump.py is a symlink
 # (= clean install from the pipx venv), touch nothing. Avoids reinstalling on every run.
 if pipx list 2>/dev/null | grep -q "impacket" && [[ -L "$HOME/.local/bin/secretsdump.py" ]]; then
-    info "impacket already installed via pipx (secretsdump.py is a symlink) — skip reinstall"
+    info "impacket already installed via pipx (secretsdump.py is a symlink) - skip reinstall"
 else
     # Remove pipx impacket if present (with broken symlinks or real files)
     if pipx list 2>/dev/null | grep -q "impacket"; then
@@ -157,14 +157,14 @@ info "Scaffolding local manifests in $LOCAL_DIR..."
 mkdir -p "$LOCAL_DIR"
 if [[ ! -f "$LOCAL_DIR/local.git.list" ]]; then
     cat > "$LOCAL_DIR/local.git.list" <<'EOF'
-# local.git.list — git repos ONLY on this machine (NOT synced to other Kali boxes)
+# local.git.list - git repos ONLY on this machine (NOT synced to other Kali boxes)
 # Format: name | git_url
 EOF
     info "Created local.git.list"
 fi
 if [[ ! -f "$LOCAL_DIR/local.release.list" ]]; then
     cat > "$LOCAL_DIR/local.release.list" <<'EOF'
-# local.release.list — release binaries ONLY on this machine (NOT synced)
+# local.release.list - release binaries ONLY on this machine (NOT synced)
 # Format: name | owner/repo | glob_asset
 EOF
     info "Created local.release.list"
@@ -173,7 +173,7 @@ fi
 # update-all reads them from here. One package per line; '#' = comment.
 if [[ ! -f "$LOCAL_DIR/npm.list" ]]; then
     cat > "$LOCAL_DIR/npm.list" <<'EOF'
-# npm.list — global npm packages updated by update-all (local, per-machine)
+# npm.list - global npm packages updated by update-all (local, per-machine)
 # One package per line. Example:
 # @anthropic-ai/claude-code
 EOF
@@ -181,7 +181,7 @@ EOF
 fi
 if [[ ! -f "$LOCAL_DIR/pip.list" ]]; then
     cat > "$LOCAL_DIR/pip.list" <<'EOF'
-# pip.list — pip --user packages updated by update-all (local, per-machine)
+# pip.list - pip --user packages updated by update-all (local, per-machine)
 # One package per line. Example:
 # pycryptodome
 EOF
@@ -193,7 +193,7 @@ if [[ -x "$TOOLS_SYNC" ]]; then
     info "Running tools-sync (creates /opt/pentest-tools + installs tools from manifests)..."
     bash "$TOOLS_SYNC" || warn "tools-sync reported errors (continuing)"
 else
-    warn "tools-sync.sh not found/executable — skip"
+    warn "tools-sync.sh not found/executable - skip"
 fi
 
 # ─── 8. WIRE update-all INTO .zshrc ───────────────────────────────────────
@@ -209,7 +209,7 @@ else
     # Strategy B: .zshrc sources the file from the repo → git pull propagates changes.
     # Remove any old inline update-all function copied in (migration from heredoc).
     if grep -q "^update-all()" "$ZSHRC" 2>/dev/null; then
-        warn "Old inline update-all found in $ZSHRC — backup + removal..."
+        warn "Old inline update-all found in $ZSHRC - backup + removal..."
         cp "$ZSHRC" "$ZSHRC.bak.$(date +%Y%m%d%H%M%S)"
         # delete from the guide comment down to the function's closing brace
         sed -i '/^# Update the whole Kali system/,/^}$/d' "$ZSHRC"
@@ -218,7 +218,7 @@ else
     info "Wiring update-all via source (from $UPDATE_ALL_SRC)..."
     {
         echo ""
-        echo "# kali-setup — update-all (source-based, auto-sync via git pull)"
+        echo "# kali-setup - update-all (source-based, auto-sync via git pull)"
         echo "export KALI_SETUP_REPO=\"$SCRIPT_DIR\""
         echo "source \"\$KALI_SETUP_REPO/shell/update-all.zsh\""
     } >> "$ZSHRC"

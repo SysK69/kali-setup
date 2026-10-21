@@ -1,7 +1,7 @@
-# Update the whole Kali system — usage: update-all [--help]
+# Update the whole Kali system - usage: update-all [--help]
 update-all() {
   if [[ "$1" == "--help" ]]; then
-    echo "update-all — update every tool installed on Kali"
+    echo "update-all - update every tool installed on Kali"
     echo ""
     echo "What it updates:"
     echo "  kali-setup   → git pull of the config repo itself (\$KALI_SETUP_REPO)"
@@ -26,14 +26,14 @@ update-all() {
       echo "  ✓ kali-setup (update-all changes take effect from the next shell)" || \
       echo "  ⚠ kali-setup: pull skipped"
   else
-    echo "  ⚠ \$KALI_SETUP_REPO not set or not a git repo — skip"
+    echo "  ⚠ \$KALI_SETUP_REPO not set or not a git repo - skip"
   fi
 
   echo "[2/9] tools-sync (/opt/pentest-tools from manifests)..."
   if [[ -n "${KALI_SETUP_REPO:-}" && -x "$KALI_SETUP_REPO/bin/tools-sync.sh" ]]; then
     bash "$KALI_SETUP_REPO/bin/tools-sync.sh" || echo "  ⚠ tools-sync: errors (see above)"
   else
-    echo "  ⚠ tools-sync.sh not found in \$KALI_SETUP_REPO/bin — skip"
+    echo "  ⚠ tools-sync.sh not found in \$KALI_SETUP_REPO/bin - skip"
   fi
 
   echo "[3/9] apt..."
@@ -54,7 +54,7 @@ update-all() {
   # included). apt always protects the running kernel: no risk to the running one.
   sudo apt autoremove --purge -y
   # Reboot notice: if the newest installed kernel ≠ the running one.
-  # NEVER reboots on its own — notification only.
+  # NEVER reboots on its own - notification only.
   local _run_k _new_k
   _run_k="$(uname -r)"
   _new_k="$(ls -1 /boot/vmlinuz-* 2>/dev/null | sed 's#.*/vmlinuz-##' | sort -V | tail -1)"
@@ -68,14 +68,14 @@ update-all() {
   if command -v pipx >/dev/null 2>&1; then
     pipx upgrade-all
   else
-    echo "  ⚠ pipx not installed — skip"
+    echo "  ⚠ pipx not installed - skip"
   fi
 
   echo "[5/9] gem..."
   if command -v gem >/dev/null 2>&1; then
     sudo gem update --no-document
   else
-    echo "  ⚠ gem not installed — skip"
+    echo "  ⚠ gem not installed - skip"
   fi
 
   # PERSONAL per-machine lists (scaffolded by setup.sh). Outside the shared repo.
@@ -83,9 +83,9 @@ update-all() {
 
   echo "[6/9] npm globals (from $_ks_cfg/npm.list)..."
   if ! command -v npm >/dev/null 2>&1; then
-    echo "  ⚠ npm not installed — skip"
+    echo "  ⚠ npm not installed - skip"
   elif [[ ! -f "$_ks_cfg/npm.list" ]]; then
-    echo "  ⚠ npm.list missing — skip (create $_ks_cfg/npm.list)"
+    echo "  ⚠ npm.list missing - skip (create $_ks_cfg/npm.list)"
   else
     # npm 11+ BLOCKS postinstall scripts by default (allow-scripts) → packages with a
     # native binary (e.g. @anthropic-ai/claude-code) stay broken stubs. Those packages
@@ -106,9 +106,9 @@ update-all() {
 
   echo "[7/9] pip --user (from $_ks_cfg/pip.list)..."
   if ! command -v pip >/dev/null 2>&1; then
-    echo "  ⚠ pip not installed — skip"
+    echo "  ⚠ pip not installed - skip"
   elif [[ ! -f "$_ks_cfg/pip.list" ]]; then
-    echo "  ⚠ pip.list missing — skip (create $_ks_cfg/pip.list)"
+    echo "  ⚠ pip.list missing - skip (create $_ks_cfg/pip.list)"
   else
     # Kali/Debian PEP 668: externally-managed environment → pip --user needs --break-system-packages
     local -a _pipf=(install --upgrade --user --break-system-packages)
