@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KALI SETUP // weaponizza una Kali pulita</title>
+<meta name="description" content="Configura una Kali pulita in un colpo e tieni la config pentest in sync tra le macchine.">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#060806; --bg2:#0b0f0b; --panel:#0d120d; --line:#14301a;
+    --green:#00ff41; --green-dim:#17b23c; --mint:#8bffb0; --ghost:#3a5a3a;
+    --red:#ff0040; --amber:#ffbd2e; --txt:#c9ffd6;
+    --mono:'Fira Code',ui-monospace,'Courier New',monospace;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--bg); color:var(--txt); font-family:var(--mono);
+    font-size:15px; line-height:1.6; overflow-x:hidden;
+  }
+  /* matrix canvas */
+  #matrix{position:fixed; inset:0; z-index:0; opacity:.14; pointer-events:none}
+  /* scanline overlay */
+  body::after{
+    content:""; position:fixed; inset:0; z-index:9; pointer-events:none;
+    background:repeating-linear-gradient(0deg,rgba(0,255,65,.025) 0 1px,transparent 1px 3px);
+    mix-blend-mode:screen;
+  }
+  .wrap{position:relative; z-index:1; max-width:960px; margin:0 auto; padding:0 16px}
+  a{color:var(--green); text-decoration:none}
+  a:hover{text-decoration:underline; text-shadow:0 0 8px var(--green)}
+  h2{
+    font-size:1.15rem; color:var(--green); margin:0 0 14px;
+    letter-spacing:1px; text-shadow:0 0 10px rgba(0,255,65,.4);
+  }
+  h2::before{content:"> "; color:var(--ghost)}
+  section{padding:46px 0; border-top:1px dashed var(--line)}
+  code{background:#0a140c; border:1px solid var(--line); border-radius:4px; padding:1px 6px; color:var(--mint); font-size:.9em}
+
+  /* hero */
+  header{min-height:92vh; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; position:relative; z-index:1; padding:40px 16px}
+  .glitch{
+    font-size:clamp(2.6rem,11vw,6.2rem); font-weight:700; letter-spacing:.12em;
+    color:var(--green); margin:0; position:relative; text-shadow:0 0 18px rgba(0,255,65,.55);
+  }
+  .glitch::before,.glitch::after{content:attr(data-t); position:absolute; left:0; top:0; width:100%; overflow:hidden}
+  .glitch::before{color:#00fff0; animation:g1 2.6s infinite linear alternate-reverse; clip-path:inset(0 0 55% 0)}
+  .glitch::after{color:var(--red); animation:g2 3.4s infinite linear alternate-reverse; clip-path:inset(55% 0 0 0)}
+  @keyframes g1{0%{transform:translate(0,0)}50%{transform:translate(-2px,1px)}100%{transform:translate(2px,-1px)}}
+  @keyframes g2{0%{transform:translate(0,0)}50%{transform:translate(2px,-1px)}100%{transform:translate(-2px,1px)}}
+  .tag{color:var(--mint); margin:10px 0 28px; font-size:clamp(.85rem,2.4vw,1.1rem)}
+  .tag .p{color:var(--ghost)}
+  .badges{display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-bottom:30px}
+  .badge{border:1px solid var(--line); background:var(--panel); padding:4px 11px; border-radius:20px; font-size:.75rem; color:var(--green-dim); letter-spacing:1px}
+  .badge.red{color:var(--red); border-color:#3a0a16}
+  .cta{display:flex; gap:12px; flex-wrap:wrap; justify-content:center}
+  .btn{border:1px solid var(--green); color:var(--green); padding:10px 20px; border-radius:6px; font-weight:500; transition:.2s; background:transparent}
+  .btn:hover{background:var(--green); color:#000; text-decoration:none; box-shadow:0 0 18px rgba(0,255,65,.5)}
+  .btn.ghost{border-color:var(--line); color:var(--txt)}
+  .scroll{position:absolute; bottom:22px; color:var(--ghost); font-size:.8rem; animation:blink 1.4s steps(1) infinite}
+  @keyframes blink{50%{opacity:.2}}
+
+  /* terminal */
+  .term{background:#070b07; border:1px solid var(--line); border-radius:10px; overflow:hidden; box-shadow:0 0 40px rgba(0,255,65,.08)}
+  .term .bar{display:flex; align-items:center; gap:7px; padding:9px 13px; background:#0a0f0a; border-bottom:1px solid var(--line)}
+  .dot{width:11px; height:11px; border-radius:50%}
+  .dot.r{background:#ff5f56}.dot.y{background:var(--amber)}.dot.g{background:#27c93f}
+  .bar span{margin-left:8px; color:var(--ghost); font-size:.8rem}
+  .term pre{margin:0; padding:18px; font-size:.86rem; line-height:1.7; white-space:pre-wrap; min-height:190px}
+  .c-g{color:var(--green)} .c-d{color:var(--ghost)} .c-m{color:var(--mint)} .c-r{color:var(--red)} .c-a{color:var(--amber)}
+  .cursor{display:inline-block; width:9px; height:1.05em; background:var(--green); vertical-align:-2px; animation:blink 1s steps(1) infinite}
+
+  /* steps */
+  .steps{display:grid; gap:10px}
+  .step{display:grid; grid-template-columns:42px 1fr; gap:14px; align-items:start; background:var(--panel); border:1px solid var(--line); border-left:3px solid var(--green); border-radius:8px; padding:13px 15px}
+  .step.rm{border-left-color:var(--red)}
+  .step .n{color:var(--green); font-weight:700}
+  .step.rm .n{color:var(--red)}
+  .step b{color:var(--mint)}
+
+  /* table */
+  table{width:100%; border-collapse:collapse; font-size:.86rem}
+  th,td{text-align:left; padding:10px 12px; border-bottom:1px solid var(--line)}
+  th{color:var(--green); letter-spacing:1px}
+  td code{white-space:nowrap}
+  tr:hover td{background:#0a140c}
+
+  /* diagram */
+  .diagram{background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:20px; overflow-x:auto}
+  .diagram pre{margin:0; color:var(--mint); font-size:.82rem; line-height:1.5}
+
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+  .card{background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:16px}
+  .card h3{margin:0 0 8px; color:var(--green); font-size:.95rem}
+  .warn{color:var(--red)}
+  footer{padding:40px 16px 60px; text-align:center; color:var(--ghost); font-size:.8rem; border-top:1px dashed var(--line)}
+
+  @media(max-width:640px){
+    .grid2{grid-template-columns:1fr}
+    body{font-size:14px}
+  }
+</style>
+</head>
+<body>
+<canvas id="matrix"></canvas>
+
+<header>
+  <h1 class="glitch" data-t="KALI SETUP">KALI SETUP</h1>
+  <div class="tag"><span class="p">root@kali:~#</span> weaponizza una Kali pulita in un colpo - tieni ogni macchina in sync</div>
+  <div class="badges">
+    <span class="badge">BASH · ZSH</span>
+    <span class="badge">KALI ROLLING</span>
+    <span class="badge">PIPX / IMPACKET</span>
+    <span class="badge">NETEXEC</span>
+    <span class="badge red">MULTI-HOST AUTO-SYNC</span>
+  </div>
+  <div class="cta">
+    <a class="btn" href="https://github.com/SysK69/kali-setup">./clone_repo</a>
+    <a class="btn ghost" href="#start">./quick_start</a>
+  </div>
+  <div style="margin-top:16px;font-size:.8rem;letter-spacing:1px;color:var(--ghost)">🇬🇧 <a href="../">EN</a> · 🇮🇹 IT</div>
+  <div class="scroll">▼ scroll</div>
+</header>
+
+<div class="wrap">
+
+  <section id="start">
+    <h2>quick_start</h2>
+    <div class="term">
+      <div class="bar"><i class="dot r"></i><i class="dot y"></i><i class="dot g"></i><span>root@kali: ~</span></div>
+      <pre id="boot"></pre>
+    </div>
+  </section>
+
+  <section>
+    <h2>cos'è</h2>
+    <p><b>kali-setup</b> automatizza la configurazione e la manutenzione di una Kali da pentest. Invece di configurare ogni macchina a mano, <b>lo dichiari una volta</b> (liste di tool + script): cloni, lanci un comando, e ottieni lo <b>stesso identico ambiente</b> - pulito, con tutti i tool aggiornati.</p>
+    <p>Invece di ricordarti a mano cosa hai installato, dove e con quale package manager, <b>lo dichiari una volta</b> in questo repo. Da lì, qualsiasi Kali diventa identica con un comando - e resta tale nel tempo.</p>
+    <p style="color:var(--mint)">cloni → <code>setup.sh</code> → attaccante pronto. Ogni settimana <code>update-all</code> e tutto è fresco. Aggiungi un tool una volta, compare su ogni Kali.</p>
+  </section>
+
+  <section>
+    <h2>il problema</h2>
+    <p>Una Kali usata sul campo degrada in fretta:</p>
+    <div class="term">
+      <div class="bar"><i class="dot r"></i><i class="dot y"></i><i class="dot g"></i><span>kali-decay.log</span></div>
+      <pre style="min-height:auto"><span class="c-r">✗</span> <span class="c-d">PATH inquinato dai venv di pipx → comandi sbagliati, import rotti</span>
+<span class="c-r">✗</span> <span class="c-d">impacket installato 3 volte (apt + pip + pipx), script duplicati</span>
+<span class="c-r">✗</span> <span class="c-d">tool obsoleti da versioni vecchie (crackmapexec, wfuzz…)</span>
+<span class="c-r">✗</span> <span class="c-d">binari in /opt scaricati a mano mesi fa, mai aggiornati</span>
+<span class="c-r">✗</span> <span class="c-d">3 Kali diverse (VM, laptop, VPS) configurate in modo diverso</span>
+<span class="c-r">✗</span> <span class="c-d">rifare tutto da zero a ogni reinstallazione</span></pre>
+    </div>
+    <p style="margin-top:12px">Questo repo risolve <b>tutti</b> questi punti in automatico e in modo versionato.</p>
+  </section>
+
+  <section>
+    <h2>i 3 pilastri</h2>
+    <div class="grid2">
+      <div class="card"><h3>🧹 setup.sh</h3>bonifica + configura una Kali (PATH, duplicati, impacket, deps, tool). <span class="c-d">Una volta, su macchina nuova.</span></div>
+      <div class="card"><h3>🔄 update-all</h3>aggiorna <i>tutto</i> (sistema + tool + repo stesso) in un comando. <span class="c-d">Settimanale / pre-engagement.</span></div>
+      <div class="card"><h3>📦 tools-sync</h3>gestisce <code>/opt/pentest-tools</code> da manifesti dichiarativi. <span class="c-d">Dentro update-all, o a mano.</span></div>
+      <div class="card"><h3>⚙ filosofia</h3>dichiarativo · idempotente · single source of truth · multi-host · non distruttivo di default.</div>
+    </div>
+  </section>
+
+  <section>
+    <h2>setup.sh --steps</h2>
+    <div class="steps">
+      <div class="step"><div class="n">01</div><div><b>AUDIT</b> - stato iniziale: PATH, pipx, apt pentest tool</div></div>
+      <div class="step"><div class="n">02</div><div><b>FIX PATH</b> - rimuove i venv dal PATH · <code>~/.local/bin</code> prima di <code>/usr/bin</code></div></div>
+      <div class="step rm"><div class="n">03</div><div><b>PURGE</b> - crackmapexec · dirbuster · zenmap · wfuzz (apt obsoleti)</div></div>
+      <div class="step"><div class="n">04</div><div><b>IMPACKET</b> - pulisce gli script reali · reinstalla via pipx da <code>fortra/impacket</code></div></div>
+      <div class="step rm"><div class="n">05</div><div><b>LEGACY</b> - rimuove il vecchio bloodhound pipx</div></div>
+      <div class="step"><div class="n">06</div><div><b>DEPS</b> - libyaml-dev (fix gem psych)</div></div>
+      <div class="step"><div class="n">07</div><div><b>TOOLS</b> - crea <code>/opt/pentest-tools</code> · installa i tool dai manifesti · scaffold liste locali</div></div>
+      <div class="step"><div class="n">08</div><div><b>ARM</b> - collega update-all a <code>~/.zshrc</code> (source-based auto-sync)</div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>update-all()</h2>
+    <p>Un comando. Aggiorna tutto. <b>Si auto-aggiorna anche da solo.</b></p>
+    <table>
+      <tr><th>#</th><th>target</th><th>cosa</th></tr>
+      <tr><td>1</td><td><code>kali-setup</code></td><td>git pull del repo config stesso → auto-sync multi-host</td></tr>
+      <tr><td>2</td><td><code>tools-sync</code></td><td>/opt/pentest-tools dai manifesti (git + release, condivisi + locali)</td></tr>
+      <tr><td>3</td><td><code>apt</code></td><td>pacchetti sistema + full-upgrade · recupera i kept-back · pulisce vecchi kernel · avviso reboot</td></tr>
+      <tr><td>4</td><td><code>pipx</code></td><td>tool Python (impacket, netexec, bloodyad, dploot, git-dumper)</td></tr>
+      <tr><td>5</td><td><code>gem</code></td><td>tool Ruby (evil-winrm)</td></tr>
+      <tr><td>6</td><td><code>npm</code></td><td>tool Node.js globali (da npm.list locale)</td></tr>
+      <tr><td>7</td><td><code>pip --user</code></td><td>librerie Python (da pip.list locale)</td></tr>
+      <tr><td>8</td><td><code>/opt</code></td><td>cloni manuali in /opt/pentest-tools/ (non nei manifesti)</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>tool manager <span style="color:var(--ghost);font-size:.8rem">/opt/pentest-tools</span></h2>
+    <p>Gestione <b>dichiarativa</b> dei tool esterni: dichiari <i>cosa</i> vuoi in un manifesto, <code>tools-sync.sh</code> lo ricostruisce identico su ogni Kali. Niente scansioni fragili, niente copie a mano.</p>
+    <table>
+      <tr><th>manifesto</th><th>formato</th><th>aggiornamento</th></tr>
+      <tr><td><code>tools/git.list</code></td><td>name | git_url</td><td>git clone → poi git pull</td></tr>
+      <tr><td><code>tools/release.list</code></td><td>name | owner/repo | glob</td><td>ultima release GitHub (solo se il tag cambia)</td></tr>
+    </table>
+    <div class="grid2" style="margin-top:16px">
+      <div class="card"><h3>condiviso</h3><code>tools/*.list</code> nel repo → commit + push. <span class="c-g">Si propaga su tutte le Kali</span> al prossimo update-all.</div>
+      <div class="card"><h3>locale (solo qui)</h3><code>~/.config/kali-setup/local.*.list</code>. <span class="c-a">Resta su questa macchina</span>, fuori dal git.</div>
+    </div>
+    <div class="term" style="margin-top:16px">
+      <div class="bar"><i class="dot r"></i><i class="dot y"></i><i class="dot g"></i><span>tools-sync.sh</span></div>
+      <pre style="min-height:auto"><span class="c-g">bin/tools-sync.sh</span>                 <span class="c-d"># sync completo (git + release)</span>
+<span class="c-g">bin/tools-sync.sh</span> <span class="c-m">--import</span>        <span class="c-d"># suggerisce tool trovati (non sposta nulla)</span>
+<span class="c-g">bin/tools-sync.sh</span> <span class="c-m">--dedup</span>         <span class="c-d"># copie sparse → keep/backup/trash/delete (chiede)</span>
+<span class="c-g">bin/tools-sync.sh</span> <span class="c-m">--prune</span>         <span class="c-d"># rimuove tool non dichiarati (opt-in, chiede conferma)</span></pre>
+    </div>
+  </section>
+
+  <section>
+    <h2>multi-host sync <span style="color:var(--ghost);font-size:.8rem">[strategy B]</span></h2>
+    <div class="diagram"><pre>
+   ┌─────────────┐      git push      ┌───────────────────┐
+   │   KALI #1   │ ─────────────────▶ │     github.com    │
+   │   (edit)    │                    │  SysK69/kali-setup │
+   └─────────────┘                    └───────────────────┘
+                                               │
+                  update-all → git pull        │
+         ┌──────────────┬─────────────────────┤
+         ▼              ▼                       ▼
+    ┌─────────┐    ┌─────────┐            ┌─────────┐
+    │ KALI #2 │    │ KALI #3 │    ...     │ KALI #n │
+    └─────────┘    └─────────┘            └─────────┘
+    </pre></div>
+    <p style="margin-top:14px">Modifichi <code>update-all.zsh</code> su una macchina → push → ogni altra Kali la riceve al prossimo <code>update-all</code>. Zero copia manuale.</p>
+  </section>
+
+  <section>
+    <h2>rules_of_engagement</h2>
+    <div class="grid2">
+      <div class="card"><h3>apt</h3>dipendenze sistema, tool senza alternativa pipx</div>
+      <div class="card"><h3>pipx</h3>tool Python CLI (impacket, netexec, bloodyad, dploot, git-dumper)</div>
+      <div class="card"><h3>gem</h3>tool Ruby (evil-winrm)</div>
+      <div class="card"><h3>npm install -g</h3>tool Node.js globali - <code>--include=optional</code> + <code>--allow-scripts</code> su npm ≥11</div>
+      <div class="card"><h3>/opt/pentest-tools/</h3>tool manuali / git / release, gestiti da tools-sync</div>
+      <div class="card"><h3>canonical PATH</h3><code>~/.local/bin → ~/.npm-global/bin → /usr/local/bin → /usr/bin</code><br><span class="warn">mai venvs/*/bin nel PATH</span></div>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  [ crafted for the terminal · no GUI required ] · <a href="https://github.com/SysK69/kali-setup">github.com/SysK69/kali-setup</a>
+</footer>
+
+<script>
+// ─── matrix rain ───
+(function(){
+  const c=document.getElementById('matrix'), x=c.getContext('2d');
+  let cols, drops, fs=14;
+  const chars='01ｱｲｳｴｵｶｷｸ@#$%&*<>[]{}/\\ABCDEF0123456789'.split('');
+  function resize(){c.width=innerWidth;c.height=innerHeight;cols=Math.floor(c.width/fs);drops=Array(cols).fill(1);}
+  resize(); addEventListener('resize',resize);
+  function draw(){
+    x.fillStyle='rgba(6,8,6,0.08)'; x.fillRect(0,0,c.width,c.height);
+    x.fillStyle='#00ff41'; x.font=fs+'px monospace';
+    for(let i=0;i<drops.length;i++){
+      const t=chars[Math.floor(Math.random()*chars.length)];
+      x.fillText(t,i*fs,drops[i]*fs);
+      if(drops[i]*fs>c.height && Math.random()>0.975) drops[i]=0;
+      drops[i]++;
+    }
+  }
+  setInterval(draw,55);
+})();
+
+// ─── boot typing ───
+(function(){
+  const el=document.getElementById('boot');
+  const lines=[
+    ['c-g','root@kali:~# '],['c-m','git clone https://github.com/SysK69/kali-setup\n'],
+    ['c-d','Cloning into \'kali-setup\'... done.\n\n'],
+    ['c-g','root@kali:~# '],['c-m','cd kali-setup && ./setup.sh\n'],
+    ['c-g','[+] '],['c-d','AUDIT stato iniziale\n'],
+    ['c-g','[+] '],['c-d','FIX PATH - ~/.local/bin prioritario\n'],
+    ['c-r','[-] '],['c-d','PURGE crackmapexec dirbuster zenmap wfuzz\n'],
+    ['c-g','[+] '],['c-d','IMPACKET reinstalled via pipx (fortra)\n'],
+    ['c-g','[+] '],['c-d','ARM update-all → ~/.zshrc\n\n'],
+    ['c-g','root@kali:~# '],['c-m','update-all\n'],
+    ['c-a','[1/9] '],['c-d','kali-setup repo self-sync... '],['c-g','✓\n'],
+    ['c-a','[2/9] '],['c-d','tools-sync /opt... '],['c-g','✓ chisel linpeas winpeas\n'],
+    ['c-a','[9/9] '],['c-g','Done. sistema armato.\n'],
+  ];
+  let i=0,j=0;
+  function type(){
+    if(i>=lines.length){el.insertAdjacentHTML('beforeend','<span class="cursor"></span>');return;}
+    const [cls,txt]=lines[i];
+    if(j===0){const s=document.createElement('span');s.className=cls;s.dataset.i=i;el.appendChild(s);}
+    const span=el.querySelector('span[data-i="'+i+'"]');
+    span.textContent=txt.slice(0,++j);
+    if(j>=txt.length){i++;j=0;setTimeout(type, txt.includes('\n')&&txt.length<4?120:30);}
+    else setTimeout(type, txt.length>40?8:22);
+  }
+  const io=new IntersectionObserver((e)=>{if(e[0].isIntersecting){type();io.disconnect();}},{threshold:.3});
+  io.observe(el);
+})();
+</script>
+</body>
+</html>

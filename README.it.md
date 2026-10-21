@@ -11,6 +11,8 @@
 
 [🇬🇧 English](README.md) · **🇮🇹 Italiano**
 
+🌐 **[Sito live](https://sysk69.github.io/kali-setup/it/)**
+
 </div>
 
 ---
