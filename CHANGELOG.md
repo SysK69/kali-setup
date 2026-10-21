@@ -7,6 +7,8 @@ versioning follows [SemVer](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- `update-all --dry-run`: preview the apt full-upgrade (`apt -s full-upgrade`) and the Kali release check without changing anything.
+- `update-all` apt step: Kali release notice - flags when a newer `base-files` (release) is available and hints the `kali-linux-*` metapackage for new default tools.
 - `update-all`: `--only <steps>` to run a subset (e.g. `apt,npm`), and a per-step **summary** (ok/warn/skip) at the end.
 - `tools-sync --dedup`: now also matches declared **release** tools by name (not just git tools).
 - `tests/`: bats unit tests for the pure helpers (`normalize_url`, `is_linux_bin`, `trim`), run in CI alongside shellcheck.

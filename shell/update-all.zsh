@@ -1,4 +1,22 @@
-# Update the whole Kali system - usage: update-all [--help] [--only <steps>]
+# Kali release notice. Kali is rolling, so a quarterly "release" is just a newer
+# snapshot that full-upgrade tracks. Reliable local signal: the base-files package
+# carries the release version - compare installed vs the repo candidate (needs a
+# prior `apt update`). No network, no fragile scraping. Never fails the run.
+_ua_kali_release() {
+  local cur inst cand
+  cur="$(grep -oE 'VERSION="[^"]+"' /etc/os-release 2>/dev/null | head -1 | cut -d'"' -f2)"
+  inst="$(dpkg-query -W -f='${Version}' base-files 2>/dev/null)"
+  cand="$(apt-cache policy base-files 2>/dev/null | awk '/Candidate:/{print $2}')"
+  if [[ -n "$inst" && -n "$cand" ]] && dpkg --compare-versions "$cand" gt "$inst" 2>/dev/null; then
+    echo "  ⚠ newer Kali release available (base-files $inst → $cand) - full-upgrade applies it"
+    echo "    note: new default tools of a release need their metapackage, e.g."
+    echo "          sudo apt install kali-linux-default   (or kali-linux-headless)"
+  else
+    echo "  ✓ Kali ${cur:-rolling} up to date"
+  fi
+}
+
+# Update the whole Kali system - usage: update-all [--help] [--only <steps>] [--dry-run]
 update-all() {
   if [[ "$1" == "--help" || "$1" == "-h" ]]; then
     echo "update-all - update every tool installed on Kali"
@@ -17,6 +35,7 @@ update-all() {
     echo "  update-all                 run all steps, then print a summary"
     echo "  update-all --only apt      run only the apt step"
     echo "  update-all --only npm,pip  run only npm and pip (comma or space separated)"
+    echo "  update-all --dry-run       preview the apt full-upgrade, change nothing"
     echo ""
     echo "Note: changes to update-all itself apply from the NEXT shell (or 'source ~/.zshrc'),"
     echo "      since the function is already loaded in memory."
@@ -24,9 +43,11 @@ update-all() {
     return 0
   fi
 
-  # --only <steps>: restrict to a subset (comma/space separated step names)
-  local only=""
-  if [[ "$1" == "--only" ]]; then
+  # arg parse: --dry-run (preview) | --only <steps> (subset)
+  local only="" dryrun=0
+  if [[ "$1" == "--dry-run" || "$1" == "-n" ]]; then
+    dryrun=1
+  elif [[ "$1" == "--only" ]]; then
     if [[ -z "${2:-}" ]]; then echo "update-all: --only needs step names (see --help)"; return 1; fi
     only=" ${2//,/ } "                 # pad with spaces for word matching
     local _w
@@ -35,6 +56,19 @@ update-all() {
     done
   elif [[ -n "${1:-}" ]]; then
     echo "update-all: unknown option '$1' (see --help)"; return 1
+  fi
+
+  # --dry-run: preview the apt full-upgrade only, apply nothing, then stop.
+  if (( dryrun )); then
+    echo "[dry-run] preview only - nothing will be changed"
+    sudo apt update
+    echo ""
+    echo "== apt full-upgrade would do: =="
+    sudo apt -s full-upgrade
+    echo ""
+    _ua_kali_release
+    echo "[dry-run] done. No packages were installed, upgraded or removed."
+    return 0
   fi
 
   # per-step status, printed as a summary at the end
@@ -96,6 +130,7 @@ update-all() {
     elif [[ -f /run/reboot-required ]]; then
       echo "  ⚠ reboot required (/run/reboot-required)"
     fi
+    _ua_kali_release
   fi
 
   # ── pipx ──────────────────────────────────────────────────────────────────

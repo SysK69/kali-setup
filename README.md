@@ -73,7 +73,7 @@ One command, updates everything - and updates itself (step 1 is `git pull` of th
 | `7` | **pip --user** | Python libraries (from local `pip.list`) |
 | `8` | **/opt** | manual git clones in `/opt/pentest-tools/` |
 
-> Single source: [`shell/update-all.zsh`](shell/update-all.zsh), sourced from `.zshrc`. Changes take effect from the **next shell** (or `source ~/.zshrc`). Prints a per-step **summary** at the end; run a subset with `update-all --only apt,npm`. See `update-all --help`.
+> Single source: [`shell/update-all.zsh`](shell/update-all.zsh), sourced from `.zshrc`. Changes take effect from the **next shell** (or `source ~/.zshrc`). Prints a per-step **summary** at the end; run a subset with `update-all --only apt,npm`, or preview the system upgrade touching nothing with `update-all --dry-run`. The apt step also flags a newer Kali release when one is available. See `update-all --help`.
 >
 > To back out: **`bash uninstall.sh`** unwires `update-all` from `~/.zshrc` and removes the symlinks (`--purge` also removes `/opt/pentest-tools` and the local config). It does not undo one-off system changes (apt purges, impacket); `~/.zshrc` is backed up first.
 
